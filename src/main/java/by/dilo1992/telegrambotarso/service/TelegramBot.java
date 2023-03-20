@@ -1,7 +1,6 @@
 package by.dilo1992.telegrambotarso.service;
 
 
-
 import by.dilo1992.telegrambotarso.config.BotConfig;
 import by.dilo1992.telegrambotarso.entity.User;
 import by.dilo1992.telegrambotarso.repository.UserRepository;
@@ -81,6 +80,18 @@ public class TelegramBot extends TelegramLongPollingBot {//реализация 
             String messageText = update.getMessage().getText();
             //чтоб бот знал кому и что отправлять, передаем сразу
             long chatId = update.getMessage().getChatId(); //id чата, в котором работает бот
+
+            //код для того, чтоб делать рассылку (набирать команду /send
+            // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
+            if (messageText.contains("/send") && config.getOwnerId() == (chatId)) {
+                //находим текст после /send
+                String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
+                List<User> users = userRepository.findAll();
+                for (User user : users) {
+                    sendMessage(user.getChatId(), textToSend);
+                }
+            }
+
 
             switch (messageText) {
                 case "/start": //начало общения с ботом начинается со слова /start
