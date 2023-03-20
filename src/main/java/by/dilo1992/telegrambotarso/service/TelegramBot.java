@@ -246,4 +246,5 @@ public class TelegramBot extends TelegramLongPollingBot {//реализация 
             log.info("Error occurred: " + e.getMessage());
         }
     }
+
 }

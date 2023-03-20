@@ -32,4 +32,5 @@ public class BotInitializer {
     public BotInitializer(TelegramBot bot) {
         this.bot = bot;
     }
+
 }
