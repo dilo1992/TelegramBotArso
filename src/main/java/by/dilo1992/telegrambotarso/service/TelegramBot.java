@@ -91,12 +91,18 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             //код для того, чтоб делать рассылку (набирать команду /send
             // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
-            if (messageText.contains("/send") && config.getOwnerId() == (chatId)) {
+            if (messageText.contains("/send") && config.getOwnerId() == chatId) {
                 //находим текст после /send
-                String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
-                List<User> users = userRepository.findAll();
-                for (User user : users) {
-                    sendMessage(user.getChatId(), textToSend);
+                try {
+                    String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
+                    List<User> users = userRepository.findAll();
+                    for (User user : users) {
+                        sendMessage(user.getChatId(), textToSend);
+                    }
+                } catch (StringIndexOutOfBoundsException e) {
+                    String answer = "This message can contains more than a one symbol which follow after '/send'"; //ответ с эмоджи
+                    log.error("We catch StringIndexOutOfBoundsException " + e.getMessage());
+                    sendMessage(chatId, answer);
                 }
             } else {
 
