@@ -2,12 +2,15 @@ package by.dilo1992.telegrambotarso.service;
 
 
 import by.dilo1992.telegrambotarso.config.BotConfig;
+import by.dilo1992.telegrambotarso.entity.Ads;
 import by.dilo1992.telegrambotarso.entity.User;
+import by.dilo1992.telegrambotarso.repository.AdsRepository;
 import by.dilo1992.telegrambotarso.repository.UserRepository;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -37,6 +40,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AdsRepository adsRepository;
 
     @Autowired
     private BotConfig config;
@@ -257,4 +263,25 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    // Метод, который автоматически запускается
+    //cron - один из параметров автозапуска (в определенное время запускает что-то)
+    // cron имеет 7 параметров: секунды, минуты, часы, дата, месяц, день недели
+    //* - любое значение
+    //например: ****** - каждую секунду, 0***** - каждую минуту, 00**** - каждый час
+    @Scheduled(cron = "${cron.scheduler}")
+    private void sendAds() {
+
+        //список обхявлений для отправки
+        List<Ads> ads = adsRepository.findAll();
+
+        //получаем список все пользователей, чтоб всем отправить
+        List<User> users = userRepository.findAll();
+
+        //отправить каждому user каждый ad
+        for (Ads ad : ads) {
+            for (User user : users) {
+                sendMessage(user.getChatId(), ad.getAd());
+            }
+        }
+    }
 }
