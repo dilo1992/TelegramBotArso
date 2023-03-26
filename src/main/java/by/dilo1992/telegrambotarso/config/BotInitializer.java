@@ -1,7 +1,7 @@
 package by.dilo1992.telegrambotarso.config;
 
 
-import by.dilo1992.telegrambotarso.service.TelegramBot;
+import by.dilo1992.telegrambotarso.service.TelegramBotArso;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -17,7 +17,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class BotInitializer {
 
     @Autowired
-    private TelegramBot bot;
+    private TelegramBotArso bot;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
@@ -29,7 +29,7 @@ public class BotInitializer {
         }
     }
 
-    public BotInitializer(TelegramBot bot) {
+    public BotInitializer(TelegramBotArso bot) {
         this.bot = bot;
     }
 

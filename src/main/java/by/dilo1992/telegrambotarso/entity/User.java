@@ -23,4 +23,5 @@ public class User {
 
     private Timestamp registeredAt;
 
+    private boolean isActive;
 }
