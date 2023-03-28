@@ -18,6 +18,7 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+
     @GetMapping()
     public String getAllComments(Model model) {
         List<Comment> comments = commentService.findAll();

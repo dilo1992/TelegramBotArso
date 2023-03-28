@@ -1,7 +1,5 @@
 package by.dilo1992.telegrambotarso.entity;
 
-import by.dilo1992.telegrambotarso.annotation.SelectProductModelFromEnum;
-import by.dilo1992.telegrambotarso.annotation.SelectTypeOfProductFromEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -26,14 +24,16 @@ public class Comment {
 //    @SelectProductModelFromEnum
 //    private String productModel;
 
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @MapsId
     private Product product;
 
     @NotNull
+    @Column(name = "feedback")
     private String feedback;
 
     @NotNull
+    @Column(name = "rating")
     private int rating;
 
 }

@@ -15,18 +15,22 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "type_of_product")
     @SelectTypeOfProductFromEnum(message = "this is a non-transmission field")
     private String typeOfProduct;
 
+    @Column(name = "model_of_type_of_product")
     @SelectProductModelFromEnum
     private String modelOfTypeOfProduct;
 
+    @Column(name = "price")
     @NotNull
     private int price;
 
+    @Column(name = "information")
     private String information;
 
-    public String printToInformation() {
+    public String printInfo() {
         return typeOfProduct + ": " + modelOfTypeOfProduct + "\n\n" +
                 "price: " + price + " roubles\n\n" + information + "\n\n";
     }

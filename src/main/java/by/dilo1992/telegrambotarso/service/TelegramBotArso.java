@@ -2,7 +2,7 @@ package by.dilo1992.telegrambotarso.service;
 
 
 import by.dilo1992.telegrambotarso.config.BotConfig;
-import by.dilo1992.telegrambotarso.entity.Ads;
+import by.dilo1992.telegrambotarso.converter.ConverterFromChatToUser;
 import by.dilo1992.telegrambotarso.entity.User;
 import by.dilo1992.telegrambotarso.model.BotCommandsEnum;
 import by.dilo1992.telegrambotarso.model.TypeOfProductEnum;
@@ -10,15 +10,13 @@ import by.dilo1992.telegrambotarso.repository.AdsRepository;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
 import by.dilo1992.telegrambotarso.repository.UserRepository;
 import com.vdurmont.emoji.EmojiParser;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -26,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +34,7 @@ import java.util.List;
 // TelegramLongPollingBot - что бот периодически сам проверяет не написали ли ему что-то
 public class TelegramBotArso extends TelegramLongPollingBot {
 
+    public static final String COMMAND_FOR_SEND_MESSAGE = "/send";
     private static final String INFO_TEXT = "This bot was created to get acquainted with the work of LLC \"ArsoBeton\" " +
             "- a manufacturer of concrete, cement mixtures and CFB blocks of the highest quality.\n" +
             "Production of products is carried out at three production sites in Minsk with delivery " +
@@ -52,26 +50,16 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     private static final String LINK_TO_WEBSITE = "All relevant information is contained on the " +
             "resource of our company\n" + "https://www.arsobeton.by";
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AdsRepository adsRepository;
-    @Autowired
-    private BotConfig config;
-    @Autowired
-    private ReplyKeyboards replyKeyboards;
-    @Autowired
-    private ProductRepository productRepository;
-
+    private final UserRepository userRepository;
+    private final AdsRepository adsRepository;
+    private final BotConfig config;
+    private final ReplyKeyboards replyKeyboards;
+    private final ProductRepository productRepository;
+    private final ConverterFromChatToUser converterFromChatToUser;
 
     //объявляем переменную, в которой будет храниться тип продукта после его выбора
     // в меню для поиска модели
-    private String typeOfProductForFindToModelOfTypeOfProductIfBlock = null;
-
-    //создаем конструктор
-    public TelegramBotArso(BotConfig config) {
-        this.config = config;
-    }
+    private String typeOfProductForFindToModelOfTypeOfProductIfBlock;
 
     //предоставляем имя бота
     @Override
@@ -98,16 +86,16 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
-            log.error("Error settings bot`s command list " + e.getMessage());
+            log.error("Error settings bot`s command list: {}", e.getMessage());
         }
     }
 
     //отправка стартового сообщения
-    private void startCommandReceived(long chatId, String name) {
+    private void startCommandReceived(long id, String name) {
         String answer = EmojiParser.parseToUnicode("Hi, " + name + " , nice to meet you!" + " :blush:"
                 + "The team of LLC \"ArsoBeton\" welcomes you!"); //ответ с эмоджи
-        log.info("Replied to user: " + name);
-        sendMessage(chatId, answer);
+        log.info("Replied to user: {}", name);
+        sendMessage(id, answer);
     }
 
     //метод для регистрации пользователя и занесения в таблицу данных о нем
@@ -116,17 +104,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         // если да - то мы его не сохраняем, если нет - сохраняем в БД
         if (userRepository.findById(message.getChatId()).isEmpty()) {
 
-            Long chatId = message.getChatId();
-            Chat chat = message.getChat();
-
-            User user = new User();
-            user.setChatId(chatId);
-            user.setFirstname(chat.getFirstName());
-            user.setLastname(chat.getLastName());
-            user.setUsername(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-            user.setActive(true);
-
+            User user = converterFromChatToUser.convert(message);
             userRepository.save(user);
             log.info("user saved: {}", user);
         } else if (!userRepository.findById(message.getChatId()).get().isActive()) {
@@ -136,7 +114,6 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             log.info("user is active again: {}", user);
         }
     }
-
 
     //что должен делать бот если ему кто-то пишет
     @Override
@@ -159,17 +136,17 @@ public class TelegramBotArso extends TelegramLongPollingBot {
 
             //код для того, чтоб делать рассылку (набирать команду /send
             // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
-            if (messageText.contains("/send") && config.getOwnerId() == chatId) {
+            if (messageText.contains(COMMAND_FOR_SEND_MESSAGE) && config.getOwnerId() == chatId) {
                 //находим текст после /send
                 try {
                     String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
                     List<User> users = userRepository.findAll();
                     for (User user : users) {
-                        sendMessage(user.getChatId(), textToSend);
+                        sendMessage(user.getId(), textToSend);
                     }
                 } catch (StringIndexOutOfBoundsException e) {
                     String answer = "This message can contains more than a one symbol which follow after '/send'"; //текст ответа
-                    log.error("We catch StringIndexOutOfBoundsException " + e.getMessage());
+                    log.error("We catch StringIndexOutOfBoundsException: {}", e.getMessage());
                     sendMessage(chatId, answer);
                 }
             } else {
@@ -184,10 +161,14 @@ public class TelegramBotArso extends TelegramLongPollingBot {
                         case "/contacts" -> sendMessage(chatId, CONTACTS);
                         case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
                         case "/exit" -> {
-                            User removableUser = userRepository.findByChatId(chatId);
-                            removableUser.setActive(false);
-                            userRepository.save(removableUser);
-                            log.info("user is not active: {}", removableUser);
+                            try {
+                                User removableUser = userRepository.findById(chatId).orElseThrow(NotFoundException::new);
+                                removableUser.setActive(false);
+                                userRepository.save(removableUser);
+                                log.info("user is not active: {}", removableUser);
+                            } catch (NotFoundException e) {
+                                log.error("A user with id is {} is not found", chatId);
+                            }
                         }
 
                         //на все остальные запросы кроме /start будем отвечать
@@ -195,11 +176,11 @@ public class TelegramBotArso extends TelegramLongPollingBot {
                     }
                 }
                 //ищем совпадения по типу продукта
-                else if (TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText) != null) {
+                else if (TypeOfProductEnum.isContains(messageText)) {
                     sendMessageWithReplyKeyboard(chatId, TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
                     typeOfProductForFindToModelOfTypeOfProductIfBlock = messageText;
                 } else if (productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText) != null) {
-                    sendMessage(chatId, productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText.toUpperCase()).printToInformation());
+                    sendMessage(chatId, productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText.toUpperCase()).printInfo());
                 } else {
                     sendMessage(chatId, "Sorry, command was not recognized");
                 }
@@ -209,7 +190,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     }
 
     // метод для отправки сообщений
-    private void sendMessage(Long chatId, String textToSend) {
+    public void sendMessage(Long chatId, String textToSend) {
         SendMessage message = new SendMessage(); //sendMessage - исходящее сообщение
         message.setChatId(chatId);
         message.setText(textToSend); //сект сообщения
@@ -223,7 +204,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            log.info("Error occurred: " + e.getMessage());
+            log.info("Error occurred: {}", e.getMessage());
         }
     }
 
@@ -238,30 +219,4 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessage(message);
     }
-
-
-    // Метод, который автоматически запускается
-    //cron - один из параметров автозапуска (в определенное время запускает что-то)
-    // cron имеет 7 параметров: секунды, минуты, часы, дата, месяц, день недели
-    //* - любое значение
-    //например: ****** - каждую секунду, 0***** - каждую минуту, 00**** - каждый час
-    //можно еще так @hourly, @yearly, @monthly, @weekly, @daily
-    @Scheduled(cron = "${cron.scheduler}")
-    private void sendAds() {
-
-        //список объявлений для отправки
-        List<Ads> ads = adsRepository.findAll();
-
-        //получаем список все пользователей, чтоб всем отправить
-        List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
-
-        //отправить каждому user каждый ad
-        for (Ads ad : ads) {
-            for (User user : users) {
-                sendMessage(user.getChatId(), ad.getAd());
-            }
-        }
-    }
-
-
 }

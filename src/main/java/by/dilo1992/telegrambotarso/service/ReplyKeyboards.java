@@ -5,7 +5,6 @@ import by.dilo1992.telegrambotarso.model.TypeOfProductEnum;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -18,10 +17,9 @@ import java.util.List;
 @Slf4j
 public class ReplyKeyboards {
 
-    @Autowired
     private final ProductRepository productRepository;
 
-    protected ReplyKeyboardMarkup getReplyKeyboardCategoryOfProduct() {
+    public ReplyKeyboardMarkup getReplyKeyboardCategoryOfProduct() {
         //создаем разметку для клавиш переписки
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -42,7 +40,7 @@ public class ReplyKeyboards {
         return keyboardMarkup;
     }
 
-    protected ReplyKeyboardMarkup getReplyKeyboardForTypeOfProduct(String typeOfProduct) throws IllegalArgumentException {
+    public ReplyKeyboardMarkup getReplyKeyboardForTypeOfProduct(String typeOfProduct) throws IllegalArgumentException {
         //создаем разметку для клавиш переписки
         try {
             ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
@@ -63,6 +61,7 @@ public class ReplyKeyboards {
             keyboardMarkup.setKeyboard(keyboardRows);
             return keyboardMarkup;
         } catch (IllegalArgumentException e) {
+            log.error(e.getMessage() + "We can`t add keyboard markup because entered type of product {} is not founded", typeOfProduct);
             throw new IllegalArgumentException("Exception in getReplyKeyboardForTypeOfProduct method: " + e.getMessage());
         }
     }

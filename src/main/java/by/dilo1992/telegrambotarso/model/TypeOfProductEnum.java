@@ -2,7 +2,7 @@ package by.dilo1992.telegrambotarso.model;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 @Slf4j
 public enum TypeOfProductEnum {
@@ -30,6 +30,8 @@ public enum TypeOfProductEnum {
 
     private String description;
 
+    TypeOfProductEnum() {}
+
     TypeOfProductEnum(String description) {
         this.description = description;
     }
@@ -40,9 +42,15 @@ public enum TypeOfProductEnum {
 
     public static String getDescriptionByTypeOfProduct(String typeOfProduct) throws IllegalArgumentException {
         try {
-            return TypeOfProductEnum.valueOf(typeOfProduct).getDescription();
+            TypeOfProductEnum.valueOf(typeOfProduct);
         } catch (IllegalArgumentException e) {
-            return null;
+            log.error(e.getMessage() + "Our company does not produce products of the introduced type {}", typeOfProduct);
         }
+        return TypeOfProductEnum.valueOf(typeOfProduct).getDescription();
+    }
+
+    public static boolean isContains(String typeOfProduct) {
+        return Arrays.stream(TypeOfProductEnum.values()).anyMatch(type -> type.name().equals(typeOfProduct.toUpperCase()));
     }
 }
+
