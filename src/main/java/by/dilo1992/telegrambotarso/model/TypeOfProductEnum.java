@@ -2,6 +2,8 @@ package by.dilo1992.telegrambotarso.model;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.annotation.Annotation;
+
 @Slf4j
 public enum TypeOfProductEnum {
 
