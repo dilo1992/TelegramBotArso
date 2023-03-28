@@ -2,6 +2,7 @@ package by.dilo1992.telegrambotarso.config;
 
 
 import by.dilo1992.telegrambotarso.service.TelegramBotArso;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -14,6 +15,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 //класс для инициализации бота
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class BotInitializer {
 
     @Autowired
@@ -28,9 +30,4 @@ public class BotInitializer {
             log.error("Error occurred: " + e.getMessage());
         }
     }
-
-    public BotInitializer(TelegramBotArso bot) {
-        this.bot = bot;
-    }
-
 }

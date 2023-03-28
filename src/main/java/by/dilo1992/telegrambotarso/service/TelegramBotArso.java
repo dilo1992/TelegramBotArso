@@ -69,9 +69,9 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     private String typeOfProductForFindToModelOfTypeOfProductIfBlock = null;
 
     //создаем конструктор
-    public TelegramBotArso(BotConfig config) {
-        this.config = config;
-    }
+//    public TelegramBotArso(BotConfig config) {
+//        this.config = config;
+//    }
 
     //предоставляем имя бота
     @Override
@@ -103,11 +103,11 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     }
 
     //отправка стартового сообщения
-    private void startCommandReceived(long chatId, String name) {
+    private void startCommandReceived(long id, String name) {
         String answer = EmojiParser.parseToUnicode("Hi, " + name + " , nice to meet you!" + " :blush:"
                 + "The team of LLC \"ArsoBeton\" welcomes you!"); //ответ с эмоджи
         log.info("Replied to user: " + name);
-        sendMessage(chatId, answer);
+        sendMessage(id, answer);
     }
 
     //метод для регистрации пользователя и занесения в таблицу данных о нем
@@ -120,7 +120,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             Chat chat = message.getChat();
 
             User user = new User();
-            user.setChatId(chatId);
+            user.setId(chatId);
             user.setFirstname(chat.getFirstName());
             user.setLastname(chat.getLastName());
             user.setUsername(chat.getUserName());
@@ -146,7 +146,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             //чтоб бот знал кому и что отправлять, передаем сразу
-            long chatId = update.getMessage().getChatId(); //id чата, в котором работает бот
+            long id = update.getMessage().getChatId(); //id чата, в котором работает бот
 
             //регистрируем пользователя и создаем меню при каждой
             // поступающей от него команды
@@ -158,50 +158,50 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             }
 
             //код для того, чтоб делать рассылку (набирать команду /send
-            // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
-            if (messageText.contains("/send") && config.getOwnerId() == chatId) {
+            // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем id)
+            if (messageText.contains("/send") && config.getOwnerId() == id) {
                 //находим текст после /send
                 try {
                     String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
                     List<User> users = userRepository.findAll();
                     for (User user : users) {
-                        sendMessage(user.getChatId(), textToSend);
+                        sendMessage(user.getId(), textToSend);
                     }
                 } catch (StringIndexOutOfBoundsException e) {
                     String answer = "This message can contains more than a one symbol which follow after '/send'"; //текст ответа
                     log.error("We catch StringIndexOutOfBoundsException " + e.getMessage());
-                    sendMessage(chatId, answer);
+                    sendMessage(id, answer);
                 }
             } else {
                 if (Arrays.stream(BotCommandsEnum.values()).anyMatch(command -> command.getName().equals(messageText.toLowerCase()))) {
                     switch (messageText) {
                         case "/start" ->
                             // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
-                                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                        case "/info" -> sendMessage(chatId, INFO_TEXT);
+                                startCommandReceived(id, update.getMessage().getChat().getFirstName());
+                        case "/info" -> sendMessage(id, INFO_TEXT);
                         case "/products" ->
-                                sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS, replyKeyboards.getReplyKeyboardCategoryOfProduct());
-                        case "/contacts" -> sendMessage(chatId, CONTACTS);
-                        case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
+                                sendMessageWithReplyKeyboard(id, INFO_IN_MAIN_MENU_OF_PRODUCTS, replyKeyboards.getReplyKeyboardCategoryOfProduct());
+                        case "/contacts" -> sendMessage(id, CONTACTS);
+                        case "/website" -> sendMessage(id, LINK_TO_WEBSITE);
                         case "/exit" -> {
-                            User removableUser = userRepository.findByChatId(chatId);
+                            User removableUser = userRepository.findByChatId(id);
                             removableUser.setActive(false);
                             userRepository.save(removableUser);
                             log.info("user is not active: {}", removableUser);
                         }
 
                         //на все остальные запросы кроме /start будем отвечать
-                        default -> sendMessage(chatId, "Sorry, command was not recognized");
+                        default -> sendMessage(id, "Sorry, command was not recognized");
                     }
                 }
                 //ищем совпадения по типу продукта
                 else if (TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText) != null) {
-                    sendMessageWithReplyKeyboard(chatId, TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
+                    sendMessageWithReplyKeyboard(id, TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
                     typeOfProductForFindToModelOfTypeOfProductIfBlock = messageText;
                 } else if (productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText) != null) {
-                    sendMessage(chatId, productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText.toUpperCase()).printToInformation());
+                    sendMessage(id, productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText.toUpperCase()).printToInformation());
                 } else {
-                    sendMessage(chatId, "Sorry, command was not recognized");
+                    sendMessage(id, "Sorry, command was not recognized");
                 }
 
             }
@@ -209,9 +209,9 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     }
 
     // метод для отправки сообщений
-    private void sendMessage(Long chatId, String textToSend) {
+    private void sendMessage(Long id, String textToSend) {
         SendMessage message = new SendMessage(); //sendMessage - исходящее сообщение
-        message.setChatId(chatId);
+        message.setChatId(id);
         message.setText(textToSend); //сект сообщения
 
         //отправка сообщений
@@ -258,7 +258,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         //отправить каждому user каждый ad
         for (Ads ad : ads) {
             for (User user : users) {
-                sendMessage(user.getChatId(), ad.getAd());
+                sendMessage(user.getId(), ad.getAd());
             }
         }
     }

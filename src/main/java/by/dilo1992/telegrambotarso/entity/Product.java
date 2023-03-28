@@ -12,12 +12,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="type_of_product")
     private String typeOfProduct;
 
+    @Column(name="model_of_type_of_product")
     private String modelOfTypeOfProduct;
 
+    @Column(name="price")
     private int price;
 
+    @Column(name="information_about_product")
     private String information;
 
     public String printToInformation() {
