@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -22,12 +23,13 @@ public class User {
     @Column(name = "lastname")
     private String lastname;
 
+    @NotNull
     @Column(name = "nickname")
     private String username;
 
     @Column(name = "registered_at")
     private Timestamp registeredAt;
-
+    @NotNull
     @Column(name = "is_active")
     private boolean isActive;
 }

@@ -1,16 +1,5 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: dmitrylobov
-  Date: 18.12.22
-  Time: 17:52
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
-
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +14,7 @@
     <!-- Font Awesome   -->
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../templates/style.css">
     <title>Title</title>
 </head>
 
@@ -34,7 +23,7 @@
     <div class="container-fluid">
         <img src="https://images.deal.by/281173257_w640_h640_betonomeshalka-mixer-truck.jpg" alt="" width="30"
              height="24" class="d-inline-block align-text-top"/>
-        <a class="navbar-brand" href="http://localhost:8081/"> ARSO-BETON </a>
+        <a class="navbar-brand" href="http://localhost:8080/"> ARSO-BETON </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -42,7 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:8081/Prod">Продукция</a>
+                    <a class="nav-link" href="http://localhost:8080/products">Продукция</a>
                 </li>
             </ul>
         </div>
@@ -55,57 +44,67 @@
     </div>
 </div>
 
-<p>Проверьте заполнение данных и их корректность</p>
+<form th:action="@{/comments/addComment}" method="post" th:object="${comment}">
 
-<form action="/AddComment" method="post">
     <div class="input-group mb-3">
         <label class="input-group-text" for="floatingName">Введите имя</label>
-        <input type="text" name="newName" class="form-control" id="floatingName" placeholder="Представьтесь, пожалуйста"
-               required>
+        <input type="text" th:field="*{username}" name="newName" class="form-control" id="floatingName"
+               placeholder="Представьтесь, пожалуйста" required>
+        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
     </div>
 
     <div class="input-group mb-3">
         <label class="input-group-text" for="inputGroupSelect01">Выберите тип оцениваемого продукта</label>
-        <select class="form-select" type="text" name="newTypeOfProduct" id="inputGroupSelect01">
-            <option selected value="null">Выберите из списка...</option>
-            <option value="M100">Бетон М100</option>
-            <option value="F150">Бетон М150</option>
-            <option value="M200">Бетон М200</option>
-            <option value="M250">Бетон М250</option>
-            <option value="M300">Бетон М300</option>
-            <option value="M350">Бетон М350</option>
-            <option value="M400">Бетон М400</option>
-            <option value="M450">Бетон М450</option>
-            <option value="M500">Бетон М500</option>
-            <option value="F200">Плита F200</option>
-            <option value="F250">Плита F250</option>
+        <select class="form-select" type="text" th:field="*{typeAndModelOfProduct}" name="newTypeOfProduct"
+                id="inputGroupSelect01" required>
+            <option selected th:value='null'>Выберите из списка...</option>
+            <option th:value="CONCRETE_M100">Бетон М100</option>
+            <option th:value="CONCRETE_M150">Бетон М150</option>
+            <option th:value="CONCRETE_M200">Бетон М200</option>
+            <option th:value="CONCRETE_M250">Бетон М250</option>
+            <option th:value="CONCRETE_M300">Бетон М300</option>
+            <option th:value="CONCRETE_M350">Бетон М350</option>
+            <option th:value="CONCRETE_M400">Бетон М400</option>
+            <option th:value="CONCRETE_M450">Бетон М450</option>
+            <option th:value="CONCRETE_M500">Бетон М500</option>
+            <option th:value="CFB_F200">Плита F200</option>
+            <option th:value="CFB_F250">Плита F250</option>
+            <option th:value="CEMENT_M50">Цемент М50</option>
+            <option th:value="CEMENT_M75">Цемент М75</option>
+            <option th:value="CEMENT_M100">Цемент М100</option>
+            <option th:value="CEMENT_M150">Цемент М150</option>
+            <option th:value="CEMENT_M200">Цемент М200</option>
         </select>
+        <span th:if="${#fields.hasErrors('typeAndModelOfProduct')}" th:errors="*{typeAndModelOfProduct}"></span>
     </div>
 
 
     <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label">Место для отзыва</label>
-        <textarea class="form-control" type="text" name="newFeedback" id="exampleFormControlTextarea1"
-                  rows="3"></textarea>
+        <textarea class="form-control" type="text" th:field="*{feedback}" th:name="newFeedback"
+                  id="exampleFormControlTextarea1" rows="3" required=""></textarea>
+        <span th:if="${#fields.hasErrors('feedback')}" th:errors="*{feedback}"></span>
     </div>
 
 
     <div class="input-group mb-3">
         <label class="input-group-text" for="inputGroupSelect01">Оцените нашу работу и продукцию</label>
-        <select class="form-select" type="text" name="newRating" id="inputGroupSelect02">
-            <option selected value="0">Выберите оценку из списка...</option>
-            <option value="1">Ужасно</option>
-            <option value="2">Плохо</option>
-            <option value="3">Удовлетворительно</option>
-            <option value="4">Хорошо</option>
-            <option value="5">Отлично</option>
+        <select class="form-select" type="text" th:field="*{rating}" th:name="newRating" id="inputGroupSelect02" required pattern="[1-5]+(\.\d{1})?">
+            <option selected th:value="0">Выберите оценку из списка...</option>
+            <option th:value="1">Ужасно</option>
+            <option th:value="2">Плохо</option>
+            <option th:value="3">Удовлетворительно</option>
+            <option th:value="4">Хорошо</option>
+            <option th:value="5">Отлично</option>
         </select>
+        <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Confirm</button>
     <button type="reset" class="btn btn-primary">Clear</button>
 </form>
 <br>
+
 
 <footer>
     <section class="footer">
@@ -148,4 +147,3 @@
 <script src="static/myJs_HW25.js"></script>
 </body>
 </html>
-

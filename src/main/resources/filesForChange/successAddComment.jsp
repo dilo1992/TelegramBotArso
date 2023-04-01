@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: dmitrylobov
-  Date: 4.12.22
-  Time: 14:38
+  Date: 18.12.22
+  Time: 17:52
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -25,7 +25,7 @@
     <!-- Font Awesome   -->
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../templates/style.css">
     <title>Title</title>
 </head>
 
@@ -49,38 +49,12 @@
     </div>
 </nav>
 
-<div class="name">
-    <div class="container-xxl">
-        <h1 style="margin-top: 5rem;" class="text-center card-img">Отзывы клиентов о ${typeOfProductForDisplayCommentAttribute}</h1>
-    </div>
-</div>
+<br><br><br>
 
-<div class="row" style="padding: 10px; padding-inline: 20px">
-    <c:forEach var="comment" items="${commentsForProduct}">
-        <div class="col-6" style="padding: 10px">
-            <div class="card h-100 w-100" style="padding-left: 10px">
-                <div class="card-body">
-                    <p class="card-title" style="text-align: left; font-size: 15px">Клиент:
-                        <c:out value="${comment.name}"/></p>
-                    <p class="card-text" style="text-align: left; font-size: 10px"> Продукт:
-                        <c:out value="${comment.typeOfProduct}"/></p>
-                    <br>
-                    <p><c:out value="${comment.feedback}"/></p>
-                </div>
-                <div class="rating">
-                    <p class="card-price" style="text-align: center"> Оценка нашей работы: <b>
-                        <c:out value="${comment.rating}"/> </b>из 5 </p>
-                </div>
-            </div>
-        </div>
-    </c:forEach>
-</div>
+<h2>Отзыв успешно добавлен!</h2>
 <br>
+<a href="/Prod">Назад к странице продуктов</a>
 
-<form action="/comments" method="post">
-    <a href="http://localhost:8081/AddComment" class="btn btn-outline-success" role="button" style="font-size: 20px">Оставить отзыв</a>
-</form>
-<br>
 
 <footer>
     <section class="footer">
@@ -123,3 +97,4 @@
 <script src="static/myJs_HW25.js"></script>
 </body>
 </html>
+

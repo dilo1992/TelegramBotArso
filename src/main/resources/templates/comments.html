@@ -1,16 +1,5 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: dmitrylobov
-  Date: 18.12.22
-  Time: 17:52
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
-
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +14,7 @@
     <!-- Font Awesome   -->
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../templates/style.css">
     <title>Title</title>
 </head>
 
@@ -34,7 +23,7 @@
     <div class="container-fluid">
         <img src="https://images.deal.by/281173257_w640_h640_betonomeshalka-mixer-truck.jpg" alt="" width="30"
              height="24" class="d-inline-block align-text-top"/>
-        <a class="navbar-brand" href="http://localhost:8081/"> ARSO-BETON </a>
+        <a class="navbar-brand" href="http://localhost:8080/"> ARSO-BETON </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -42,18 +31,55 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:8081/Prod">Продукция</a>
+                    <a class="nav-link" href="http://localhost:8080/products">Продукция</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<br><br><br>
+<div class="name">
+    <div class="container-xxl">
+        <h1 th:inline="text" style="margin-top: 5rem;" class="text-center card-img">Отзывы клиентов о
+            [[${typeOfProduct}]] [[${modelOfTypeOfProduct}]]</h1>
+        <!--        <h1 style="margin-top: 5rem;" class="text-center card-img">Отзывы клиентов о ${typeOfProductForDisplayCommentAttribute}</h1>-->
+    </div>
+</div>
 
-<h2>Отзыв успешно добавлен!</h2>
-<br>
-<a href="/Prod">Назад к странице продуктов</a>
+<div class="row row-cols-1 row-cols-md-2 g-2" style="padding: 10px; padding-inline: 20px">
+    <div th:each="comment:${comments}">
+        <div class="col" style="padding: 10px">
+            <div class="card h-100 w-100" style="padding-left: 10px">
+                <div class="card-body">
+                    <p class="card-title" style="text-align: left; font-size: 15px">Клиент:
+                    <div th:text="${comment.user.username}"></div>
+                    </p>
+                    <p class="card-text" style="text-align: left; font-size: 10px"> Продукт:
+                    <div th:text="${comment.product.modelOfTypeOfProduct}"/>
+                    </p>
+                    <br>
+                    <p>
+                    <div th:text="${comment.feedback}"/>
+                    </p>
+
+                    <div class="rating">
+                        <p class="card-price" style="text-align: center"> Оценка нашей работы:
+                            <b><div th:text="${comment.rating}"></div></b>из 5 </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+
+<div class="row" style="padding-bottom: 100px">
+    <form action="/comments" method="post">
+        <a href="http://localhost:8080/comments/addComment" class="btn btn-outline-success" role="button"
+           style="font-size: 20px">Оставить отзыв</a>
+    </form>
+    <br>
+</div>
 
 
 <footer>
@@ -97,4 +123,3 @@
 <script src="static/myJs_HW25.js"></script>
 </body>
 </html>
-

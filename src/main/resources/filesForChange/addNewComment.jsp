@@ -25,7 +25,7 @@
     <!-- Font Awesome   -->
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../templates/style.css">
     <title>Title</title>
 </head>
 
