@@ -1,7 +1,7 @@
 package by.dilo1992.telegrambotarso.service;
 
 import by.dilo1992.telegrambotarso.entity.Product;
-import by.dilo1992.telegrambotarso.model.TypeOfProductEnum;
+import by.dilo1992.telegrambotarso.model.TypesOfProduct;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class ReplyKeyboards {
         //создаем лист рядов
         List<KeyboardRow> keyboardRows = new ArrayList<>();
 
-        for (TypeOfProductEnum typeOfProduct : TypeOfProductEnum.values()) {
+        for (TypesOfProduct typeOfProduct : TypesOfProduct.values()) {
             //создаем новый макет ряда
             KeyboardRow row = new KeyboardRow();
             //заполняем ряд клавишей (одной)

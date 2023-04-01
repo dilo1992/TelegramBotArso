@@ -1,6 +1,6 @@
 package by.dilo1992.telegrambotarso.model;
 
-public enum BotCommandsEnum {
+public enum BotCommands {
     START("getting started with the bot"),
     INFO("info about LLC 'ArsoBeton'"),
     PRODUCTS("obtain information about manufactured products and reference prices"),
@@ -10,7 +10,7 @@ public enum BotCommandsEnum {
 
     private String description;
 
-    BotCommandsEnum(String description) {
+    BotCommands(String description) {
         this.description = description;
     }
 
@@ -23,11 +23,11 @@ public enum BotCommandsEnum {
     }
 
     public static String getAllCommandsAndTheirDescription() {
-        String string = "";
-        for (BotCommandsEnum botCommandsEnum : BotCommandsEnum.values()) {
-            string += "/" + botCommandsEnum.name().toLowerCase() + ": " + botCommandsEnum.description + "\n";
+        String nameOfCommandAndHerDescription = "";
+        for (BotCommands botCommands : BotCommands.values()) {
+            nameOfCommandAndHerDescription += "/" + botCommands.name().toLowerCase() + ": " + botCommands.description + "\n";
         }
-        return string;
+        return nameOfCommandAndHerDescription;
     }
 }
 

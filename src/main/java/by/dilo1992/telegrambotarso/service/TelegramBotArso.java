@@ -4,9 +4,8 @@ package by.dilo1992.telegrambotarso.service;
 import by.dilo1992.telegrambotarso.config.BotConfig;
 import by.dilo1992.telegrambotarso.converter.ConverterFromChatToUser;
 import by.dilo1992.telegrambotarso.entity.User;
-import by.dilo1992.telegrambotarso.model.BotCommandsEnum;
-import by.dilo1992.telegrambotarso.model.TypeOfProductEnum;
-import by.dilo1992.telegrambotarso.repository.AdsRepository;
+import by.dilo1992.telegrambotarso.model.BotCommands;
+import by.dilo1992.telegrambotarso.model.TypesOfProduct;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
 import by.dilo1992.telegrambotarso.repository.UserRepository;
 import com.vdurmont.emoji.EmojiParser;
@@ -40,7 +39,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             "Production of products is carried out at three production sites in Minsk with delivery " +
             "throughout Belarus by truck mixers and dump trucks.\n" +
             "This telegram bot will help you with the following questions:\n" +
-            BotCommandsEnum.getAllCommandsAndTheirDescription();
+            BotCommands.getAllCommandsAndTheirDescription();
 
     private static final String INFO_IN_MAIN_MENU_OF_PRODUCTS = "Select the type of product you are interested in\n";
 
@@ -51,7 +50,6 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             "resource of our company\n" + "https://www.arsobeton.by";
 
     private final UserRepository userRepository;
-    private final AdsRepository adsRepository;
     private final BotConfig config;
     private final ReplyKeyboards replyKeyboards;
     private final ProductRepository productRepository;
@@ -78,7 +76,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         //создаем список команд для меню (добавляем список команд для бота в меню и краткое описание)
 //        //нельзя использовать верхний регистр в командах
         List<BotCommand> listOfCommands = new ArrayList<>(); //лист содержащий команды бота
-        for (BotCommandsEnum botCommandsEnum : BotCommandsEnum.values()) {
+        for (BotCommands botCommandsEnum : BotCommands.values()) {
             listOfCommands.add(new BotCommand(botCommandsEnum.getName(), botCommandsEnum.getDescription()));
         }
 
@@ -138,46 +136,14 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
             if (messageText.contains(COMMAND_FOR_SEND_MESSAGE) && config.getOwnerId() == chatId) {
                 //находим текст после /send
-                try {
-                    String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
-                    List<User> users = userRepository.findAll();
-                    for (User user : users) {
-                        sendMessage(user.getId(), textToSend);
-                    }
-                } catch (StringIndexOutOfBoundsException e) {
-                    String answer = "This message can contains more than a one symbol which follow after '/send'"; //текст ответа
-                    log.error("We catch StringIndexOutOfBoundsException: {}", e.getMessage());
-                    sendMessage(chatId, answer);
-                }
+                sendOwnerCustomMessage(messageText, chatId);
             } else {
-                if (Arrays.stream(BotCommandsEnum.values()).anyMatch(command -> command.getName().equals(messageText.toLowerCase()))) {
-                    switch (messageText) {
-                        case "/start" ->
-                            // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
-                                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                        case "/info" -> sendMessage(chatId, INFO_TEXT);
-                        case "/products" ->
-                                sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS, replyKeyboards.getReplyKeyboardCategoryOfProduct());
-                        case "/contacts" -> sendMessage(chatId, CONTACTS);
-                        case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
-                        case "/exit" -> {
-                            try {
-                                User removableUser = userRepository.findById(chatId).orElseThrow(NotFoundException::new);
-                                removableUser.setActive(false);
-                                userRepository.save(removableUser);
-                                log.info("user is not active: {}", removableUser);
-                            } catch (NotFoundException e) {
-                                log.error("A user with id is {} is not found", chatId);
-                            }
-                        }
-
-                        //на все остальные запросы кроме /start будем отвечать
-                        default -> sendMessage(chatId, "Sorry, command was not recognized");
-                    }
+                if (Arrays.stream(BotCommands.values()).anyMatch(command -> command.getName().equals(messageText.toLowerCase()))) {
+                    setActionsOnCommandsInBot(update, messageText, chatId);
                 }
                 //ищем совпадения по типу продукта
-                else if (TypeOfProductEnum.isContains(messageText)) {
-                    sendMessageWithReplyKeyboard(chatId, TypeOfProductEnum.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
+                else if (TypesOfProduct.contains(messageText)) {
+                    sendMessageWithReplyKeyboard(chatId, TypesOfProduct.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
                     typeOfProductForFindToModelOfTypeOfProductIfBlock = messageText;
                 } else if (productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText) != null) {
                     sendMessage(chatId, productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProductForFindToModelOfTypeOfProductIfBlock, messageText.toUpperCase()).printInfo());
@@ -186,6 +152,48 @@ public class TelegramBotArso extends TelegramLongPollingBot {
                 }
 
             }
+        }
+    }
+
+    private void sendOwnerCustomMessage(String messageText, long chatId) {
+        try {
+            String textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                sendMessage(user.getId(), textToSend);
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            String answer = "This message can contains more than a one symbol which follow after '/send'"; //текст ответа
+            log.error("We catch StringIndexOutOfBoundsException: {}", e.getMessage());
+            sendMessage(chatId, answer);
+        }
+    }
+
+    private void setActionsOnCommandsInBot(Update update, String messageText, long chatId) {
+        switch (messageText) {
+            case "/start" ->
+                // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
+                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            case "/info" -> sendMessage(chatId, INFO_TEXT);
+            case "/products" ->
+                    sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS, replyKeyboards.getReplyKeyboardCategoryOfProduct());
+            case "/contacts" -> sendMessage(chatId, CONTACTS);
+            case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
+            case "/exit" -> makeUserInactive(chatId);
+
+            //на все остальные запросы кроме /start будем отвечать
+            default -> sendMessage(chatId, "Sorry, command was not recognized");
+        }
+    }
+
+    private void makeUserInactive(long chatId) {
+        try {
+            User removableUser = userRepository.findById(chatId).orElseThrow(NotFoundException::new);
+            removableUser.setActive(false);
+            userRepository.save(removableUser);
+            log.info("user is not active: {}", removableUser);
+        } catch (NotFoundException e) {
+            log.error("A user with id is {} is not found", chatId);
         }
     }
 

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 
 @Slf4j
-public enum TypeOfProductEnum {
+public enum TypesOfProduct {
 
     CEMENT("A large-scale construction process rarely " +
             "does without concrete. It is necessary for pouring the foundation, " +
@@ -30,9 +30,9 @@ public enum TypeOfProductEnum {
 
     private String description;
 
-    TypeOfProductEnum() {}
+    TypesOfProduct() {}
 
-    TypeOfProductEnum(String description) {
+    TypesOfProduct(String description) {
         this.description = description;
     }
 
@@ -42,15 +42,15 @@ public enum TypeOfProductEnum {
 
     public static String getDescriptionByTypeOfProduct(String typeOfProduct) throws IllegalArgumentException {
         try {
-            TypeOfProductEnum.valueOf(typeOfProduct);
+            TypesOfProduct.valueOf(typeOfProduct);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage() + "Our company does not produce products of the introduced type {}", typeOfProduct);
         }
-        return TypeOfProductEnum.valueOf(typeOfProduct).getDescription();
+        return TypesOfProduct.valueOf(typeOfProduct).getDescription();
     }
 
-    public static boolean isContains(String typeOfProduct) {
-        return Arrays.stream(TypeOfProductEnum.values()).anyMatch(type -> type.name().equals(typeOfProduct.toUpperCase()));
+    public static boolean contains(String typeOfProduct) {
+        return Arrays.stream(TypesOfProduct.values()).anyMatch(type -> type.name().equals(typeOfProduct.toUpperCase()));
     }
 }
 

@@ -1,9 +1,9 @@
 package by.dilo1992.telegrambotarso.validator;
 
 import by.dilo1992.telegrambotarso.annotation.SelectProductModelFromEnum;
-import by.dilo1992.telegrambotarso.model.CementModelEnum;
-import by.dilo1992.telegrambotarso.model.CfbBlockModelEnum;
-import by.dilo1992.telegrambotarso.model.ConcreteModelEnum;
+import by.dilo1992.telegrambotarso.model.CementModels;
+import by.dilo1992.telegrambotarso.model.CfbBlockModels;
+import by.dilo1992.telegrambotarso.model.ConcreteModels;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -21,19 +21,19 @@ public class ProductModelValidator implements ConstraintValidator<SelectProductM
         int resultConcrete = 0;
 
         try {
-            CfbBlockModelEnum.valueOf(value.toUpperCase());
+            CfbBlockModels.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
             resultCfbBlock = 1;
         }
 
         try {
-            ConcreteModelEnum.valueOf(value.toUpperCase());
+            ConcreteModels.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
             resultConcrete = 1;
         }
 
         try {
-            CementModelEnum.valueOf(value.toUpperCase());
+            CementModels.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
             resultCement = 1;
         }
