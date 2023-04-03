@@ -8,7 +8,6 @@ import by.dilo1992.telegrambotarso.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,14 +24,14 @@ public class ConverterFromCommentDtoToComment implements Converter<CommentDto, C
         Comment comment = new Comment();
         List<String> valuesFromFormWithTypeAndModelOfProduct = Arrays.stream(commentDto.getTypeAndModelOfProduct().split("_")).toList();
         String typeOfProduct;
-        String modelOdTypeOfProduct;
+        String modelOfTypeOfProduct;
         if (valuesFromFormWithTypeAndModelOfProduct.size() == 2) {
             typeOfProduct = valuesFromFormWithTypeAndModelOfProduct.get(0);
-            modelOdTypeOfProduct = valuesFromFormWithTypeAndModelOfProduct.get(1);
+            modelOfTypeOfProduct = valuesFromFormWithTypeAndModelOfProduct.get(1);
         } else
             throw new ArrayIndexOutOfBoundsException("Invalid type or model of product");
-        comment.setUser(userRepository.findByUsername(commentDto.getUsername()));
-        comment.setProduct(productService.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOdTypeOfProduct));
+        comment.setUser(userRepository.findByUsername(commentDto.getUsername()).orElseThrow());
+        comment.setProduct(productService.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOfTypeOfProduct));
         comment.setFeedback(commentDto.getFeedback());
         comment.setRating(commentDto.getRating());
         return comment;

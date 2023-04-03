@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {ProductModelValidator.class})
-public @interface SelectProductModelFromEnum {
+public @interface SelectProductModels {
 
     String message() default "Product model must match the nomenclature";
 

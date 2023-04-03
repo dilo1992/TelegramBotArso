@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {TypeOfProductValidator.class})
-public @interface SelectTypeOfProductFromEnum {
+public @interface SelectTypeOfProducts {
 
     String message() default "This field should be contains in the type of product enum";
 

@@ -15,7 +15,7 @@
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
     <link rel="stylesheet" href="../templates/style.css">
-    <title>Title</title>
+    <title>Comments of product</title>
 </head>
 
 <body>
@@ -35,14 +35,38 @@
                 </li>
             </ul>
         </div>
+        <section th:if="${username=='dilo1992'}">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8080/products/formForCorrectPrice">Корректировка цены
+                        продукта</a>
+                </li>
+            </ul>
+        </section>
+    </div>
+    <div class="collapse navbar-collapse" id="username">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8080/login"
+                <h1 th:text="${username}">Username</h1></a>
+            </li>
+            <div th:if="${username=='anonymous'}"></div>
+            <div th:if="!${username=='anonymous'}">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8080/logout"
+                    <h3> Выйти</h3></a>
+                </li>
+            </div>
+        </ul>
+    </div>
     </div>
 </nav>
+
 
 <div class="name">
     <div class="container-xxl">
         <h1 th:inline="text" style="margin-top: 5rem;" class="text-center card-img">Отзывы клиентов о
             [[${typeOfProduct}]] [[${modelOfTypeOfProduct}]]</h1>
-        <!--        <h1 style="margin-top: 5rem;" class="text-center card-img">Отзывы клиентов о ${typeOfProductForDisplayCommentAttribute}</h1>-->
     </div>
 </div>
 
@@ -74,8 +98,8 @@
 </div>
 
 <div class="row" style="padding-bottom: 100px">
-    <form action="/comments" method="post">
-        <a href="http://localhost:8080/comments/addComment" class="btn btn-outline-success" role="button"
+    <form action="/comments" method="get">
+        <a href="http://localhost:8080/comments/formForAddComment" class="btn btn-outline-success" role="button"
            style="font-size: 20px">Оставить отзыв</a>
     </form>
     <br>

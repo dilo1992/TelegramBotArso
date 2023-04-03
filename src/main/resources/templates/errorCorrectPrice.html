@@ -15,7 +15,7 @@
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
     <link rel="stylesheet" href="../templates/style.css">
-    <title>Title</title>
+    <title>ОШИБКА</title>
 </head>
 
 <body>
@@ -62,73 +62,18 @@
     </div>
 </nav>
 
-
 <div class="name">
     <div class="container-xxl">
-        <h1 style="margin-top: 5rem;" class="text-center card-img">Написать отзыв</h1>
+        <h1 style="margin-top: 5rem;" class="text-center card-img">Изменить цену</h1>
     </div>
 </div>
 
-<form th:action="@{/comments/addComment}" method="post" th:object="${comment}">
+<br><br><br>
 
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="floatingName">Введите имя</label>
-        <input type="text" th:field="*{username}" name="newName" class="form-control" id="floatingName"
-               placeholder="Представьтесь, пожалуйста" required>
-        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-    </div>
-
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">Выберите тип оцениваемого продукта</label>
-        <select class="form-select" type="text" th:field="*{typeAndModelOfProduct}" name="newTypeOfProduct"
-                id="inputGroupSelect01" required>
-            <option selected th:value='null'>Выберите из списка...</option>
-            <option th:value="CONCRETE_M100">Бетон М100</option>
-            <option th:value="CONCRETE_M150">Бетон М150</option>
-            <option th:value="CONCRETE_M200">Бетон М200</option>
-            <option th:value="CONCRETE_M250">Бетон М250</option>
-            <option th:value="CONCRETE_M300">Бетон М300</option>
-            <option th:value="CONCRETE_M350">Бетон М350</option>
-            <option th:value="CONCRETE_M400">Бетон М400</option>
-            <option th:value="CONCRETE_M450">Бетон М450</option>
-            <option th:value="CONCRETE_M500">Бетон М500</option>
-            <option th:value="CFB_F200">Плита F200</option>
-            <option th:value="CFB_F250">Плита F250</option>
-            <option th:value="CEMENT_M50">Цемент М50</option>
-            <option th:value="CEMENT_M75">Цемент М75</option>
-            <option th:value="CEMENT_M100">Цемент М100</option>
-            <option th:value="CEMENT_M150">Цемент М150</option>
-            <option th:value="CEMENT_M200">Цемент М200</option>
-        </select>
-        <span th:if="${#fields.hasErrors('typeAndModelOfProduct')}" th:errors="*{typeAndModelOfProduct}"></span>
-    </div>
-
-
-    <div class="mb-3">
-        <label for="exampleFormControlTextarea1" class="form-label">Место для отзыва</label>
-        <textarea class="form-control" type="text" th:field="*{feedback}" th:name="newFeedback"
-                  id="exampleFormControlTextarea1" rows="3" required=""></textarea>
-        <span th:if="${#fields.hasErrors('feedback')}" th:errors="*{feedback}"></span>
-    </div>
-
-
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">Оцените нашу работу и продукцию</label>
-        <select class="form-select" type="text" th:field="*{rating}" th:name="newRating" id="inputGroupSelect02" required pattern="[1-5]+(\.\d{1})?">
-            <option selected th:value="0">Выберите оценку из списка...</option>
-            <option th:value="1">Ужасно</option>
-            <option th:value="2">Плохо</option>
-            <option th:value="3">Удовлетворительно</option>
-            <option th:value="4">Хорошо</option>
-            <option th:value="5">Отлично</option>
-        </select>
-        <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">Confirm</button>
-    <button type="reset" class="btn btn-primary">Clear</button>
-</form>
+<h2>ОШИБКА! Проверьте вводимые данные</h2>
+<h2 th:text="${error}">Error</h2>
 <br>
+<a href="/products">Назад к странице продуктов</a>
 
 
 <footer>

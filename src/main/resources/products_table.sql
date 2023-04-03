@@ -1,4 +1,4 @@
-create table products
+create table if not exists products
 (
     id                       bigint auto_increment
         primary key,

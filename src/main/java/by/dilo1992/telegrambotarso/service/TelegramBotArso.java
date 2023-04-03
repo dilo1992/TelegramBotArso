@@ -7,11 +7,13 @@ import by.dilo1992.telegrambotarso.entity.User;
 import by.dilo1992.telegrambotarso.model.BotCommands;
 import by.dilo1992.telegrambotarso.model.TypesOfProduct;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
+import by.dilo1992.telegrambotarso.repository.RoleRepository;
 import by.dilo1992.telegrambotarso.repository.UserRepository;
 import com.vdurmont.emoji.EmojiParser;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -43,17 +45,19 @@ public class TelegramBotArso extends TelegramLongPollingBot {
 
     private static final String INFO_IN_MAIN_MENU_OF_PRODUCTS = "Select the type of product you are interested in\n";
 
-    private static final String CONTACTS = "Contacts of our competent and friendly staff:\n" +
-            "@JuliaLovova - главный специалист по продажам\n";
+    private static final String CONTACTS = "Contacts of our competent and friendly staff:" +
+            "\n@JuliaLovova - главный специалист по продажам\n";
 
     private static final String LINK_TO_WEBSITE = "All relevant information is contained on the " +
-            "resource of our company\n" + "https://www.arsobeton.by";
+            "resource of our company\n" + "http://localhost:8080/";
 
     private final UserRepository userRepository;
     private final BotConfig config;
     private final ReplyKeyboards replyKeyboards;
     private final ProductRepository productRepository;
     private final ConverterFromChatToUser converterFromChatToUser;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     //объявляем переменную, в которой будет храниться тип продукта после его выбора
     // в меню для поиска модели
@@ -76,8 +80,8 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         //создаем список команд для меню (добавляем список команд для бота в меню и краткое описание)
 //        //нельзя использовать верхний регистр в командах
         List<BotCommand> listOfCommands = new ArrayList<>(); //лист содержащий команды бота
-        for (BotCommands botCommandsEnum : BotCommands.values()) {
-            listOfCommands.add(new BotCommand(botCommandsEnum.getName(), botCommandsEnum.getDescription()));
+        for (BotCommands botCommands : BotCommands.values()) {
+            listOfCommands.add(new BotCommand(botCommands.getName(), botCommands.getDescription()));
         }
 
 //        //передаем созданный выше список в бот
@@ -91,8 +95,16 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     //отправка стартового сообщения
     private void startCommandReceived(long id, String name) {
         String answer = EmojiParser.parseToUnicode("Hi, " + name + " , nice to meet you!" + " :blush:"
-                + "The team of LLC \"ArsoBeton\" welcomes you!"); //ответ с эмоджи
+                + "The team of LLC \"ArsoBeton\" welcomes you!");
         log.info("Replied to user: {}", name);
+        sendMessage(id, answer);
+    }
+
+    //отправка сообщения с логином и паролем
+    private void getCredentialsForAuthentication(long id, String username, String password) {
+        String answer = "We have generated a password for you to access some of the functions of our resource.\n" +
+                "Login details:\n\nLogin: " + username + "\nPassword: " + password;
+        log.info("User is given login parameters: login {}, password {}", username, password);
         sendMessage(id, answer);
     }
 
@@ -105,8 +117,9 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             User user = converterFromChatToUser.convert(message);
             userRepository.save(user);
             log.info("user saved: {}", user);
-        } else if (!userRepository.findById(message.getChatId()).get().isActive()) {
-            User user = userRepository.findById(message.getChatId()).get();
+        } else if (!userRepository.findById(message.getChatId()).orElseThrow().isActive()) {
+            User user = userRepository.findById(message.getChatId())
+                    .orElseThrow(() -> new NotFoundException("User is not found"));
             user.setActive(true);
             userRepository.save(user);
             log.info("user is active again: {}", user);
@@ -171,13 +184,19 @@ public class TelegramBotArso extends TelegramLongPollingBot {
 
     private void setActionsOnCommandsInBot(Update update, String messageText, long chatId) {
         switch (messageText) {
-            case "/start" ->
-                // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            case "/start" -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
+
             case "/info" -> sendMessage(chatId, INFO_TEXT);
-            case "/products" ->
-                    sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS, replyKeyboards.getReplyKeyboardCategoryOfProduct());
+            case "/products" -> sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS,
+                    replyKeyboards.getReplyKeyboardCategoryOfProduct());
             case "/contacts" -> sendMessage(chatId, CONTACTS);
+            case "/mycreds" -> {
+                User user = userRepository.findById(chatId).orElseThrow();
+                String username = user.getUsername();
+                String password = String.valueOf(chatId);
+                getCredentialsForAuthentication(chatId, username, password);
+            }
             case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
             case "/exit" -> makeUserInactive(chatId);
 

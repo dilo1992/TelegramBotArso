@@ -19,19 +19,16 @@ public class Comment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_username")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name="product_id")
-//    @JoinColumn(name="type_of_product")
     private Product product;
 
-//    @NotNull
     @Column(name = "feedback")
     private String feedback;
 
-//    @NotNull
     @Column(name = "rating")
     private double rating;
 

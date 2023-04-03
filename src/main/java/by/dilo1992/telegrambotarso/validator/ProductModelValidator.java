@@ -1,13 +1,13 @@
 package by.dilo1992.telegrambotarso.validator;
 
-import by.dilo1992.telegrambotarso.annotation.SelectProductModelFromEnum;
+import by.dilo1992.telegrambotarso.annotation.SelectProductModels;
 import by.dilo1992.telegrambotarso.model.CementModels;
 import by.dilo1992.telegrambotarso.model.CfbBlockModels;
 import by.dilo1992.telegrambotarso.model.ConcreteModels;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ProductModelValidator implements ConstraintValidator<SelectProductModelFromEnum, String> {
+public class ProductModelValidator implements ConstraintValidator<SelectProductModels, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         boolean exist = true;

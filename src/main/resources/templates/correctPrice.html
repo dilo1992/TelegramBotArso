@@ -15,7 +15,7 @@
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
     <link rel="stylesheet" href="../templates/style.css">
-    <title>Title</title>
+    <title>Correct price</title>
 </head>
 
 <body>
@@ -69,17 +69,11 @@
     </div>
 </div>
 
-<form th:action="@{/comments/addComment}" method="post" th:object="${comment}">
+<form th:action="@{/products/correctPrice}" method="post" th:object="${product}">
+
 
     <div class="input-group mb-3">
-        <label class="input-group-text" for="floatingName">Введите имя</label>
-        <input type="text" th:field="*{username}" name="newName" class="form-control" id="floatingName"
-               placeholder="Представьтесь, пожалуйста" required>
-        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-    </div>
-
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">Выберите тип оцениваемого продукта</label>
+        <label class="input-group-text" for="inputGroupSelect01">Выберите тип изменяемого продукта</label>
         <select class="form-select" type="text" th:field="*{typeAndModelOfProduct}" name="newTypeOfProduct"
                 id="inputGroupSelect01" required>
             <option selected th:value='null'>Выберите из списка...</option>
@@ -103,26 +97,11 @@
         <span th:if="${#fields.hasErrors('typeAndModelOfProduct')}" th:errors="*{typeAndModelOfProduct}"></span>
     </div>
 
-
-    <div class="mb-3">
-        <label for="exampleFormControlTextarea1" class="form-label">Место для отзыва</label>
-        <textarea class="form-control" type="text" th:field="*{feedback}" th:name="newFeedback"
-                  id="exampleFormControlTextarea1" rows="3" required=""></textarea>
-        <span th:if="${#fields.hasErrors('feedback')}" th:errors="*{feedback}"></span>
-    </div>
-
-
     <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">Оцените нашу работу и продукцию</label>
-        <select class="form-select" type="text" th:field="*{rating}" th:name="newRating" id="inputGroupSelect02" required pattern="[1-5]+(\.\d{1})?">
-            <option selected th:value="0">Выберите оценку из списка...</option>
-            <option th:value="1">Ужасно</option>
-            <option th:value="2">Плохо</option>
-            <option th:value="3">Удовлетворительно</option>
-            <option th:value="4">Хорошо</option>
-            <option th:value="5">Отлично</option>
-        </select>
-        <span th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></span>
+        <label class="input-group-text" for="floatingName">Введите новую цену продукта</label>
+        <input type="text" th:field="*{price}" name="newPrice" class="form-control" id="floatingName"
+               placeholder="Введите новую цену" required>
+        <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Confirm</button>

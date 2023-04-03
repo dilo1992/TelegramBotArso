@@ -1,7 +1,7 @@
 package by.dilo1992.telegrambotarso.entity;
 
-import by.dilo1992.telegrambotarso.annotation.SelectProductModelFromEnum;
-import by.dilo1992.telegrambotarso.annotation.SelectTypeOfProductFromEnum;
+import by.dilo1992.telegrambotarso.annotation.SelectProductModels;
+import by.dilo1992.telegrambotarso.annotation.SelectTypeOfProducts;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,11 +16,11 @@ public class Product {
     private Long id;
 
     @Column(name = "type_of_product")
-    @SelectTypeOfProductFromEnum(message = "this is a non-transmission field")
+    @SelectTypeOfProducts(message = "this is a non-transmission field")
     private String typeOfProduct;
 
     @Column(name = "model_of_type_of_product")
-    @SelectProductModelFromEnum
+    @SelectProductModels
     private String modelOfTypeOfProduct;
 
     @Column(name = "price")
