@@ -1,6 +1,6 @@
 package by.dilo1992.telegrambotarso.service;
 
-import by.dilo1992.telegrambotarso.converter.ConverterFromProductDtoToProduct;
+import by.dilo1992.telegrambotarso.converter.ProductDtoToProductConverter;
 import by.dilo1992.telegrambotarso.dto.ProductDto;
 import by.dilo1992.telegrambotarso.entity.Product;
 import by.dilo1992.telegrambotarso.repository.ProductRepository;
@@ -16,7 +16,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ConverterFromProductDtoToProduct converterFromProductDtoToProduct;
+    private final ProductDtoToProductConverter converterFromProductDtoToProduct;
 
     public List<Product> findAll() {
         return productRepository.findAll();

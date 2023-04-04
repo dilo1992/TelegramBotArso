@@ -2,7 +2,7 @@ package by.dilo1992.telegrambotarso.service;
 
 
 import by.dilo1992.telegrambotarso.config.BotConfig;
-import by.dilo1992.telegrambotarso.converter.ConverterFromChatToUser;
+import by.dilo1992.telegrambotarso.converter.ChatToUserConverter;
 import by.dilo1992.telegrambotarso.entity.User;
 import by.dilo1992.telegrambotarso.model.BotCommands;
 import by.dilo1992.telegrambotarso.model.TypesOfProduct;
@@ -49,13 +49,13 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             "\n@JuliaLovova - главный специалист по продажам\n";
 
     private static final String LINK_TO_WEBSITE = "All relevant information is contained on the " +
-            "resource of our company\n" + "http://localhost:8080/";
+            "resource of our company\n" + "http://127.0.0.1:8080/";
 
     private final UserRepository userRepository;
     private final BotConfig config;
     private final ReplyKeyboards replyKeyboards;
     private final ProductRepository productRepository;
-    private final ConverterFromChatToUser converterFromChatToUser;
+    private final ChatToUserConverter converterFromChatToUser;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 

@@ -40,13 +40,13 @@ public class ProductController {
         return "products";
     }
 
-    @GetMapping("/formForCorrectPrice")
+    @GetMapping("/form")
     public String getEmptyFormForCorrectPriceOfProduct(Model model, Principal principal) {
         commentService.getAttributeIsAdmin(model, principal);
         return "correctPrice";
     }
 
-    @PostMapping("/correctPrice")
+    @PostMapping("/price")
     public String correctPrice(@Valid ProductDto productDto, Errors errors, Model model, SessionStatus status, Principal principal) {
         try {
             if (errors.hasErrors()) {

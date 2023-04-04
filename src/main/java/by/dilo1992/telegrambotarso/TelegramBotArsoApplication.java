@@ -7,9 +7,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"by.dilo1992"})
 @EnableJpaRepositories
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:application.properties")
 public class TelegramBotArsoApplication {
 
     @Bean

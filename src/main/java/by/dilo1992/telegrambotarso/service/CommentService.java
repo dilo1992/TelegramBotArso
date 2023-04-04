@@ -1,6 +1,6 @@
 package by.dilo1992.telegrambotarso.service;
 
-import by.dilo1992.telegrambotarso.converter.ConverterFromCommentDtoToComment;
+import by.dilo1992.telegrambotarso.converter.CommentDtoToCommentConverter;
 import by.dilo1992.telegrambotarso.dto.CommentDto;
 import by.dilo1992.telegrambotarso.entity.Comment;
 import by.dilo1992.telegrambotarso.entity.Product;
@@ -29,7 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ProductRepository productRepository;
     private static final DecimalFormat df = new DecimalFormat("#.#");
-    private final ConverterFromCommentDtoToComment converterFromCommentDtoToComment;
+    private final CommentDtoToCommentConverter converterFromCommentDtoToComment;
 
     public List<Comment> findAll() {
         return commentRepository.findAll();
@@ -37,7 +37,7 @@ public class CommentService {
 
     public List<Comment> findAllByTypeAndModelOfProduct(String typeOfProduct, String modelOfTypeOfProduct) {
         Product product = productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOfTypeOfProduct);
-        return commentRepository.findAllByProduct(product).orElseThrow();
+        return commentRepository.findAllByProduct(product);
     }
 
     public String getAverageRatingForPrint(String typeOfProduct, String modelOfTypeOfProduct) {

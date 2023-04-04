@@ -41,6 +41,7 @@ services:
     env_file: .env
     #    указываем порты spring (н каких будет крутиться приложение)
     ports:
+#      -  - "6868:8080"
       - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
     #    можем указать, какие параметры из файла application.properties можем
     #    поменять/переопределить и указать какие параметры брать из файла .env

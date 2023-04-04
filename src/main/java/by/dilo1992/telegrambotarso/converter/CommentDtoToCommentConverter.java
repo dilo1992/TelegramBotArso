@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ConverterFromCommentDtoToComment implements Converter<CommentDto, Comment> {
+public class CommentDtoToCommentConverter implements Converter<CommentDto, Comment> {
 
     private final ProductService productService;
     private final UserRepository userRepository;
