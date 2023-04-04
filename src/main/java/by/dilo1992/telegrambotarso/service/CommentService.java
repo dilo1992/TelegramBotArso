@@ -31,13 +31,8 @@ public class CommentService {
     private static final DecimalFormat df = new DecimalFormat("#.#");
     private final ConverterFromCommentDtoToComment converterFromCommentDtoToComment;
 
-
     public List<Comment> findAll() {
         return commentRepository.findAll();
-    }
-
-    public List<Comment> findAllByProduct(Product product) {
-        return commentRepository.findAllByProduct(product).orElseThrow();
     }
 
     public List<Comment> findAllByTypeAndModelOfProduct(String typeOfProduct, String modelOfTypeOfProduct) {
@@ -55,9 +50,6 @@ public class CommentService {
         return df.format(avgRatingWithoutFormat);
     }
 
-    public void save(Comment comment) {
-        commentRepository.save(comment);
-    }
 
     public void save(CommentDto commentDto) {
         Comment comment = converterFromCommentDtoToComment.convert(commentDto);
@@ -100,7 +92,22 @@ public class CommentService {
         model.addAttribute("averageRatingCfbF200", getAverageRatingForPrint(CFB_BLOCK, "F200"));
         model.addAttribute("averageRatingCfbF250", getAverageRatingForPrint(CFB_BLOCK, "F250"));
 
-
+        model.addAttribute("priceOfConcreteM100", getPriceOfProductForPrint(CONCRETE, "M100"));
+        model.addAttribute("priceOfConcreteM150", getPriceOfProductForPrint(CONCRETE, "M150"));
+        model.addAttribute("priceOfConcreteM200", getPriceOfProductForPrint(CONCRETE, "M200"));
+        model.addAttribute("priceOfConcreteM250", getPriceOfProductForPrint(CONCRETE, "M250"));
+        model.addAttribute("priceOfConcreteM300", getPriceOfProductForPrint(CONCRETE, "M300"));
+        model.addAttribute("priceOfConcreteM350", getPriceOfProductForPrint(CONCRETE, "M350"));
+        model.addAttribute("priceOfConcreteM400", getPriceOfProductForPrint(CONCRETE, "M400"));
+        model.addAttribute("priceOfConcreteM450", getPriceOfProductForPrint(CONCRETE, "M450"));
+        model.addAttribute("priceOfConcreteM500", getPriceOfProductForPrint(CONCRETE, "M500"));
+        model.addAttribute("priceOfCementM50", getPriceOfProductForPrint(CEMENT, "M50"));
+        model.addAttribute("priceOfCementM75", getPriceOfProductForPrint(CEMENT, "M75"));
+        model.addAttribute("priceOfCementM100", getPriceOfProductForPrint(CEMENT, "M100"));
+        model.addAttribute("priceOfCementM150", getPriceOfProductForPrint(CEMENT, "M150"));
+        model.addAttribute("priceOfCementM200", getPriceOfProductForPrint(CEMENT, "M200"));
+        model.addAttribute("priceOfCfbF200", getPriceOfProductForPrint(CFB_BLOCK, "F200"));
+        model.addAttribute("priceOfCfbF250", getPriceOfProductForPrint(CFB_BLOCK, "F250"));
     }
 
     public void resetEnteredCommentDto(CommentDto commentDto) {
@@ -117,5 +124,9 @@ public class CommentService {
         } catch (NullPointerException e) {
             model.addAttribute("username", "anonymous");
         }
+    }
+
+    public double getPriceOfProductForPrint(String typeOfProduct, String modelOfTypeOfProduct) {
+        return productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOfTypeOfProduct).getPrice();
     }
 }

@@ -5,9 +5,7 @@ import by.dilo1992.telegrambotarso.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@PropertySource("security.properties")
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -28,9 +25,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/comments/addNewComment", "/products").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/products/correctPrice").hasRole("ADMIN")
+                        .requestMatchers("/comments/***").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/products/***").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .formLogin()
                 .permitAll()
@@ -52,9 +48,5 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         authenticationProvider.setUserDetailsService(customUserDetailsService);
         return authenticationProvider;
-    }
-
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
     }
 }

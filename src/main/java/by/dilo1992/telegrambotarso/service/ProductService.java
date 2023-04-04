@@ -22,26 +22,14 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> findByTypeOfProduct(String typeOfProduct) {
-        return productRepository.findAllByTypeOfProduct(typeOfProduct);
+    public Product findByTypeOfProductAndModelOfTypeOfProduct(String typeOfProduct, String modelOfTypeOfProduct) {
+        return productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOfTypeOfProduct);
     }
 
-    public Product findByTypeOfProductAndModelOfTypeOfProduct(String typeOfProduct, String modelOfTyoeOfProduct) {
-        return productRepository.findByTypeOfProductAndModelOfTypeOfProduct(typeOfProduct, modelOfTyoeOfProduct);
-    }
-
-    public void save(Product product) {
-        productRepository.save(product);
-    }
-
-    public void save(ProductDto productDto) {
-        Product product = converterFromProductDtoToProduct.convert(productDto);
-        productRepository.save(product);
-    }
 
     public void correctPrice(ProductDto productDto) {
         Product product = converterFromProductDtoToProduct.convert(productDto);
-        productRepository.delete(product);
+//        productRepository.delete(product);
         product.setPrice(productDto.getPrice());
         productRepository.save(product);
     }

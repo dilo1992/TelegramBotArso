@@ -9,7 +9,7 @@ public enum BotCommands {
     WEBSITE("visit our website for more information about our work"),
     EXIT("get away from us :-(");
 
-    private String description;
+    private final String description;
 
     BotCommands(String description) {
         this.description = description;

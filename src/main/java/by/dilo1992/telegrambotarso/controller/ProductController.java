@@ -1,6 +1,5 @@
 package by.dilo1992.telegrambotarso.controller;
 
-import by.dilo1992.telegrambotarso.dto.CommentDto;
 import by.dilo1992.telegrambotarso.dto.ProductDto;
 import by.dilo1992.telegrambotarso.service.CommentService;
 import by.dilo1992.telegrambotarso.service.ProductService;
