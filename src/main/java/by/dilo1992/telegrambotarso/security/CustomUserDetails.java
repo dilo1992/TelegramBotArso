@@ -23,7 +23,7 @@ public class CustomUserDetails implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private boolean isActive;
 
-    //аналогия конвертера - из объекта класса user делаем объект класса CustomUserDetails
+    //analogy of the converter - from the object of the user class we make the object of the CustomUserDetails class
     public static CustomUserDetails getUserDetailsFromUser(User user) {
         CustomUserDetails userDetails = new CustomUserDetails();
         userDetails.username = user.getUsername();

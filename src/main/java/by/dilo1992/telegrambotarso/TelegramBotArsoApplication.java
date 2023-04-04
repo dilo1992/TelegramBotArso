@@ -14,9 +14,10 @@ public class TelegramBotArsoApplication {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);  //для кодировки
-        // используем, в скобках указываем силу кодировки
-        // (рекомендуется сила от 6 (до 31), по дефолту -1)
+        return new BCryptPasswordEncoder(8);
+        //for encoding
+        // we use, in brackets we indicate the encoding strength
+        // (recommended strength from 6 (up to 31), by default -1)
     }
 
     public static void main(String[] args) {

@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-// TelegramLongPollingBot - что бот периодически сам проверяет не написали ли ему что-то
+// TelegramLongPollingBot - the bot periodically checks whether someone wrote to him
 public class TelegramBotArso extends TelegramLongPollingBot {
 
     public static final String COMMAND_FOR_SEND_MESSAGE = "/send";
@@ -59,32 +59,32 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    //объявляем переменную, в которой будет храниться тип продукта после его выбора
-    // в меню для поиска модели
+    //declare a variable in which the product type will be stored after its selection
+    // in the model search menu
     private String typeOfProductForFindToModelOfTypeOfProductIfBlock;
 
-    //предоставляем имя бота
+    //provide the bot name
     @Override
     public String getBotUsername() {
         return config.getBotName();
     }
 
-    //для предоставления нашего токена
+    //to provide our token
     @Override
     public String getBotToken() {
         return config.getToken();
     }
 
-    //метод для создания меню
+    //method to create the menu
     private void createMenu() {
-        //создаем список команд для меню (добавляем список команд для бота в меню и краткое описание)
-//        //нельзя использовать верхний регистр в командах
-        List<BotCommand> listOfCommands = new ArrayList<>(); //лист содержащий команды бота
+        //create a list of commands for the menu (add a list of commands for the bot to the menu and a brief description)
+        //cannot use upper case in commands
+        List<BotCommand> listOfCommands = new ArrayList<>(); //list containing bot commands
         for (BotCommands botCommands : BotCommands.values()) {
             listOfCommands.add(new BotCommand(botCommands.getName(), botCommands.getDescription()));
         }
 
-//        //передаем созданный выше список в бот
+//       //pass the list created above to the bot
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
@@ -92,7 +92,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         }
     }
 
-    //отправка стартового сообщения
+    //sending the startup message
     private void startCommandReceived(long id, String name) {
         String answer = EmojiParser.parseToUnicode("Hi, " + name + " , nice to meet you!" + " :blush:"
                 + "The team of LLC \"ArsoBeton\" welcomes you!");
@@ -100,7 +100,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         sendMessage(id, answer);
     }
 
-    //отправка сообщения с логином и паролем
+    //sending message with login and password
     private void getCredentialsForAuthentication(long id, String username, String password) {
         String answer = "We have generated a password for you to access some of the functions of our resource.\n" +
                 "Login details:\n\nLogin: " + username + "\nPassword: " + password;
@@ -108,7 +108,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         sendMessage(id, answer);
     }
 
-    //метод для регистрации пользователя и занесения в таблицу данных о нем
+    //method for user registration and entering data about him into the table
     private void registerUser(Message message) throws TelegramApiException {
         //проверяем не зарегистрирован ли пользователь уже,
         // если да - то мы его не сохраняем, если нет - сохраняем в БД
@@ -126,18 +126,18 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         }
     }
 
-    //что должен делать бот если ему кто-то пишет
+    //what should the bot do if someone writes to him
     @Override
     public void onUpdateReceived(Update update) {
 
-        //проверка того, что у нас есть что проверять в сообщении (что не пусто, чтоб не получить исключение)
+        //verification of what we have to check in the message (that it is not empty, so as not to get an exception)
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
-            //чтоб бот знал кому и что отправлять, передаем сразу
-            long chatId = update.getMessage().getChatId(); //id чата, в котором работает бот
+            //so that the bot knows who and what to send, we send it immediately
+            long chatId = update.getMessage().getChatId(); //id of the chat in which the bot works
 
-            //регистрируем пользователя и создаем меню при каждой
-            // поступающей от него команды
+            //register the user and create a menu for each one
+            // incoming command
             try {
                 registerUser(update.getMessage());
                 createMenu();
@@ -145,16 +145,18 @@ public class TelegramBotArso extends TelegramLongPollingBot {
                 log.error("We catch TelegramApiException with message: {}", e.getMessage());
             }
 
-            //код для того, чтоб делать рассылку (набирать команду /send
-            // и дальше писать текст для рассылки) + проверка на владельца бота (сравниваем chatId)
+
+            //code for sending a message (type the command /send
+            // and further write the text for mailing) + check for the owner of the bot (we compare the chatId
             if (messageText.contains(COMMAND_FOR_SEND_MESSAGE) && config.getOwnerId() == chatId) {
-                //находим текст после /send
+                //find the text after /send
                 sendOwnerCustomMessage(messageText, chatId);
             } else {
                 if (Arrays.stream(BotCommands.values()).anyMatch(command -> command.getName().equals(messageText.toLowerCase()))) {
                     setActionsOnCommandsInBot(update, messageText, chatId);
                 }
-                //ищем совпадения по типу продукта
+
+                //looking for matches by product type
                 else if (TypesOfProduct.contains(messageText)) {
                     sendMessageWithReplyKeyboard(chatId, TypesOfProduct.getDescriptionByTypeOfProduct(messageText), replyKeyboards.getReplyKeyboardForTypeOfProduct(messageText));
                     typeOfProductForFindToModelOfTypeOfProductIfBlock = messageText;
@@ -185,7 +187,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     private void setActionsOnCommandsInBot(Update update, String messageText, long chatId) {
         switch (messageText) {
             case "/start" -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-            // update.getMessage().getChat().getFirstName() - имя пользователя, с которым ведется чат
+            // update.getMessage().getChat().getFirstName() - the name of the user with whom the chat is conducted
 
             case "/info" -> sendMessage(chatId, INFO_TEXT);
             case "/products" -> sendMessageWithReplyKeyboard(chatId, INFO_IN_MAIN_MENU_OF_PRODUCTS,
@@ -200,7 +202,8 @@ public class TelegramBotArso extends TelegramLongPollingBot {
             case "/website" -> sendMessage(chatId, LINK_TO_WEBSITE);
             case "/exit" -> makeUserInactive(chatId);
 
-            //на все остальные запросы кроме /start будем отвечать
+
+            //we will respond to all other requests except /start
             default -> sendMessage(chatId, "Sorry, command was not recognized");
         }
     }
@@ -216,7 +219,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         }
     }
 
-    // метод для отправки сообщений
+    // method for sending messages
     public void sendMessage(Long chatId, String textToSend) {
         SendMessage message = new SendMessage(); //sendMessage - исходящее сообщение
         message.setChatId(chatId);
@@ -235,8 +238,8 @@ public class TelegramBotArso extends TelegramLongPollingBot {
         }
     }
 
-    // Метод для использования при команде /products. Здесь определяем
-    // кнопки, прикрепленные к сообщению с вариантами ответов
+    // Method for use with the /products command. Here we define
+    // buttons attached to a message with multiple answers
     private void sendMessageWithReplyKeyboard(Long chatId, String descriptionForTypeOfProduct,
                                               ReplyKeyboardMarkup keyboardMarkup) {
 

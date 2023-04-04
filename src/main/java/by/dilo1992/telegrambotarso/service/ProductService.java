@@ -29,7 +29,6 @@ public class ProductService {
 
     public void correctPrice(ProductDto productDto) {
         Product product = converterFromProductDtoToProduct.convert(productDto);
-//        productRepository.delete(product);
         product.setPrice(productDto.getPrice());
         productRepository.save(product);
     }

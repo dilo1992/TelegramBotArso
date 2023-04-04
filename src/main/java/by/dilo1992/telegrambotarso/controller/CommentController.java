@@ -56,7 +56,6 @@ public class CommentController {
             CommentDto commentDtoForSave = new CommentDto(commentDto.getUsername(), commentDto.getTypeAndModelOfProduct(), commentDto.getFeedback(), commentDto.getRating());
             commentService.save(commentDtoForSave);
 
-            // для очистки сессии
             status.setComplete();
 
             commentService.resetEnteredCommentDto(commentDto);

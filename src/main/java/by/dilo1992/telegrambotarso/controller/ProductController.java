@@ -61,13 +61,8 @@ public class ProductController {
             ProductDto productDtoForSave = new ProductDto(productDto.getTypeAndModelOfProduct(), productDto.getPrice());
             productService.correctPrice(productDtoForSave);
 
-            // для очистки сессии
             status.setComplete();
 
-            // КОСТЫЛЬНЫЙ МЕТОД для удаления введенных нами данных в поля
-            // для ввода (потому что после сохранения нами введенные нами данные
-            // не стирались из самого поля для ввода, а оставались они)
-            // А теперь после ввода вместо введенных нами данных вставляются пустые строки
             productService.resetEnteredProductDto(productDto);
 
             return "successCorrectPrice";
