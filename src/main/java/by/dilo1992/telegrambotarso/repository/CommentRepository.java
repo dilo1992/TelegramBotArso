@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Optional<List<Comment>> findAllByProduct (Product product);
+    List<Comment> findAllByProduct (Product product);
 }

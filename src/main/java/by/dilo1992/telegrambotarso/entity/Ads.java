@@ -3,7 +3,7 @@ package by.dilo1992.telegrambotarso.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-//класс для объекта рекламы, которая будет храниться в БД и отправляться по времени
+//class for the advertising object, which will be stored in the DB and sent over time
 @Entity
 @Table(name = "ads_table")
 @Data

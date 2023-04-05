@@ -6,11 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-//аннотация обозначает, что есть методы, подлежащие автоматическому запуску
-//должна быть в классе с аннотацией @Configuration
+//annotation indicates that there are methods subject to automatic launch
 @EnableScheduling
 @Configuration
-@PropertySource("application.properties")
 @Data
 public class BotConfig {
 

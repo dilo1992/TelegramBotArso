@@ -7,16 +7,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"by.dilo1992"})
 @EnableJpaRepositories
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:application.properties")
 public class TelegramBotArsoApplication {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);  //для кодировки
-        // используем, в скобках указываем силу кодировки
-        // (рекомендуется сила от 6 (до 31), по дефолту -1)
+        return new BCryptPasswordEncoder(8);
+        //for encoding
+        // we use, in brackets we indicate the encoding strength
+        // (recommended strength from 6 (up to 31), by default -1)
     }
 
     public static void main(String[] args) {

@@ -7,7 +7,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConverterFromCommentToCommentDto implements Converter<Comment, CommentDto> {
+public class CommentToCommentDtoConverter implements Converter<Comment, CommentDto> {
 
     @Override
     public CommentDto convert(Comment comment) {

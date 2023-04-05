@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ConverterFromProductDtoToProduct implements Converter<ProductDto, Product> {
+public class ProductDtoToProductConverter implements Converter<ProductDto, Product> {
 
     private final ProductRepository productRepository;
 

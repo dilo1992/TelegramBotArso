@@ -12,10 +12,10 @@ public class ProductModelValidator implements ConstraintValidator<SelectProductM
     public boolean isValid(String value, ConstraintValidatorContext context) {
         boolean exist = true;
 
-        //если не содержится значение в соответствующих enum, то будет
-        // выброшено исключение IllegalArgumentException и эти переменные станут равными 1 каждая
-        //потом проверяем, если они все равны 1, то значение невалидно,
-        // если хоть одна не равна 1 - то валидно
+        //if the value is not contained in the corresponding enum, then it will be
+        // an IllegalArgumentException exception is thrown and these variables will be equal to 1 each
+        //then we check if they are all equal to 1, then the value is invalid,
+        // if at least one is not equal to 1, then it is valid
         int resultCfbBlock = 0;
         int resultCement = 0;
         int resultConcrete = 0;

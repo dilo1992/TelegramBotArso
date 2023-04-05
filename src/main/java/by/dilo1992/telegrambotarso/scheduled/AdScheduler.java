@@ -22,22 +22,22 @@ public class AdScheduler {
     private final UserRepository userRepository;
     private final TelegramBotArso bot;
 
-    // Метод, который автоматически запускается
-    //cron - один из параметров автозапуска (в определенное время запускает что-то)
-    // cron имеет 7 параметров: секунды, минуты, часы, дата, месяц, день недели
-    //* - любое значение
-    //например: ****** - каждую секунду, 0***** - каждую минуту, 00**** - каждый час
-    //можно еще так @hourly, @yearly, @monthly, @weekly, @daily
+    // A method that is automatically run
+    //cron is one of the parameters of autostart (starts something at a certain time)
+    // cron has 7 parameters: seconds, minutes, hours, date, month, day of the week
+    //* - any value
+    //for example: ****** - every second, 0***** - every minute, 00**** - every time
+    //it's also possible @hourly, @yearly, @monthly, @weekly, @daily
     @Scheduled(cron = "${cron.scheduler}")
     private void sendAds() {
 
-        //список объявлений для отправки
+// list of ads to send
         List<Ads> ads = adsRepository.findAll();
 
-        //получаем список все пользователей, чтоб всем отправить
+//get a list of all users to send to everyone
         List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
 
-        //отправить каждому user каждый ad
+//send every user every ad
         for (Ads ad : ads) {
             for (User user : users) {
                 bot.sendMessage(user.getId(), ad.getAd());

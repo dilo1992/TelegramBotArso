@@ -14,7 +14,7 @@ public @interface SelectProductModels {
 
     String message() default "Product model must match the nomenclature";
 
-    //эти два поля обязательные, где они применяются нам знать пока не обязательно, просто добавляем и все
+    //these two fields are mandatory, where they are used we don't need to know yet, just add them and that's it
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

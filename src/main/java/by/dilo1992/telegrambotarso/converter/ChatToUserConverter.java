@@ -14,9 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.sql.Timestamp;
 
 @Component
-@PropertySource("application.properties")
 @RequiredArgsConstructor
-public class ConverterFromChatToUser implements Converter<Message, User> {
+public class ChatToUserConverter implements Converter<Message, User> {
 
     private final BCryptPasswordEncoder passwordEncoder;
 

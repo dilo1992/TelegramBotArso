@@ -36,13 +36,13 @@ public class CommentController {
     }
 
 
-    @GetMapping("/formForAddComment")
+    @GetMapping("/form")
     public String getAddCommentEmptyPage(Model model, Principal principal) {
         commentService.getAttributeIsAdmin(model, principal);
         return "addNewComments";
     }
 
-    @PostMapping("/addComment")
+    @PostMapping("/new")
     public String create(@Valid CommentDto commentDto, Errors errors, Model model, SessionStatus status, Principal principal) {
         try {
             if (errors.hasErrors()) {
@@ -56,13 +56,8 @@ public class CommentController {
             CommentDto commentDtoForSave = new CommentDto(commentDto.getUsername(), commentDto.getTypeAndModelOfProduct(), commentDto.getFeedback(), commentDto.getRating());
             commentService.save(commentDtoForSave);
 
-            // для очистки сессии
             status.setComplete();
 
-            // КОСТЫЛЬНЫЙ МЕТОД для удаления введенных нами данных в поля
-            // для ввода (потому что после сохранения нами введенные нами данные
-            // не стирались из самого поля для ввода, а оставались они)
-            // А теперь после ввода вместо введенных нами данных вставляются пустые строки
             commentService.resetEnteredCommentDto(commentDto);
 
             return "successAddNewComment";
