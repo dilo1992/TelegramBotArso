@@ -35,30 +35,34 @@
                 </li>
             </ul>
         </div>
-        <section th:if="${username=='dilo1992'}">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent1" th:if="${username=='dilo1992'}">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="http://localhost:8080/products/form">Корректировка цены
                         продукта</a>
                 </li>
             </ul>
-        </section>
-    </div>
-    <div class="collapse navbar-collapse" id="username">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8080/login"
-                <h1 th:text="${username}">Username</h1></a>
-            </li>
-            <div th:if="${username=='anonymous'}"></div>
-            <div th:if="!${username=='anonymous'}">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:8080/logout"
-                    <h3> Выйти</h3></a>
+                    <a class="nav-link" href="http://localhost:8080/ads">Новостные рассылки</a>
                 </li>
-            </div>
-        </ul>
-    </div>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse" id="username">
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8080/login"
+                    <h1 th:text="${username}">Username</h1></a>
+                </li>
+                <div th:if="${username=='anonymous'}"></div>
+                <div th:if="!${username=='anonymous'}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost:8080/logout"
+                        <h3> Выйти</h3></a>
+                    </li>
+                </div>
+            </ul>
+        </div>
     </div>
 </nav>
 

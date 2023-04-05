@@ -46,7 +46,7 @@ public class TelegramBotArso extends TelegramLongPollingBot {
     private static final String INFO_IN_MAIN_MENU_OF_PRODUCTS = "Select the type of product you are interested in\n";
 
     private static final String CONTACTS = "Contacts of our competent and friendly staff:" +
-            "\n@JuliaLovova - главный специалист по продажам\n";
+            "\n@dilo1992 - главный специалист по продажам\n";
 
     private static final String LINK_TO_WEBSITE = "All relevant information is contained on the " +
             "resource of our company\n" + "http://127.0.0.1:8080/";

@@ -26,18 +26,66 @@ public class AdScheduler {
     //cron is one of the parameters of autostart (starts something at a certain time)
     // cron has 7 parameters: seconds, minutes, hours, date, month, day of the week
     //* - any value
-    //for example: ****** - every second, 0***** - every minute, 00**** - every time
+    //for example: ****** - every second, 0***** - every minute, 00**** - every hour
     //it's also possible @hourly, @yearly, @monthly, @weekly, @daily
-    @Scheduled(cron = "${cron.scheduler}")
-    private void sendAds() {
+    @Scheduled(cron = "${cron.scheduler-every-minute}")
+    private void sendAdsEveryMinute() {
 
 // list of ads to send
-        List<Ads> ads = adsRepository.findAll();
+        List<Ads> ads = adsRepository.findAllByRhythm("MINUTE");
 
 //get a list of all users to send to everyone
         List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
 
 //send every user every ad
+        for (Ads ad : ads) {
+            for (User user : users) {
+                bot.sendMessage(user.getId(), ad.getAd());
+            }
+        }
+    }
+
+    @Scheduled(cron = "${cron.scheduler-every-hour}")
+    private void sendAdsEveryHour() {
+
+        List<Ads> ads = adsRepository.findAllByRhythm("HOUR");
+        List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
+        for (Ads ad : ads) {
+            for (User user : users) {
+                bot.sendMessage(user.getId(), ad.getAd());
+            }
+        }
+    }
+
+    @Scheduled(cron = "${cron.scheduler-every-day}")
+    private void sendAdsEveryDay() {
+
+        List<Ads> ads = adsRepository.findAllByRhythm("DAY");
+        List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
+        for (Ads ad : ads) {
+            for (User user : users) {
+                bot.sendMessage(user.getId(), ad.getAd());
+            }
+        }
+    }
+
+    @Scheduled(cron = "${cron.scheduler-every-month}")
+    private void sendAdsEveryMonth() {
+
+        List<Ads> ads = adsRepository.findAllByRhythm("MONTH");
+        List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
+        for (Ads ad : ads) {
+            for (User user : users) {
+                bot.sendMessage(user.getId(), ad.getAd());
+            }
+        }
+    }
+
+    @Scheduled(cron = "${cron.scheduler-every-year}")
+    private void sendAdsEveryYear() {
+
+        List<Ads> ads = adsRepository.findAllByRhythm("YEAR");
+        List<User> users = userRepository.findAll().stream().filter(user -> user.isActive()).toList();
         for (Ads ad : ads) {
             for (User user : users) {
                 bot.sendMessage(user.getId(), ad.getAd());

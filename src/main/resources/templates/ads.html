@@ -15,7 +15,7 @@
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
     <link rel="stylesheet" href="../templates/style.css">
-    <title>Success</title>
+    <title>Ads page</title>
 </head>
 
 <body>
@@ -69,16 +69,47 @@
 
 <div class="name">
     <div class="container-xxl">
-        <h1 style="margin-top: 5rem;" class="text-center card-img">Изменить цену</h1>
+        <h1 style="margin-top: 5rem;" class="text-center card-img">Рассылка ARSO-BETON</h1>
     </div>
 </div>
 
-<br><br><br>
+<div class="name">
+    <div class="container-xxl">
+        <h1 th:inline="text" style="margin-top: 5rem;" class="text-center card-img">Элементы рассылки</h1>
+    </div>
+</div>
 
-<h2>Цена успешно изменена!</h2>
-<br>
-<a href="/products">Назад к странице продуктов</a>
+<div class="row row-cols-1 row-cols-md-2 g-2" style="padding: 10px; padding-inline: 20px">
+    <div th:each="ad:${ads}">
+        <div class="col" style="padding: 10px">
+            <div class="card h-100 w-100" style="padding-left: 10px">
+                <div class="card-body">
+                    <p class="card-title" style="text-align: left; font-size: 15px">Id
+                    <div th:text="${ad.id}"></div>
+                    </p>
+                    <p class="card-title" style="text-align: left; font-size: 15px">Текст рассылки
+                    <div th:text="${ad.ad}"></div>
+                    </p>
+                    <p class="card-text" style="text-align: left; font-size: 10px"> Периодичность:
+                    <div th:text="${ad.rhythm}"/>
+                    </p>
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+
+<div class="row" style="padding-bottom: 100px">
+    <form action="/ads" method="get">
+        <a href="http://localhost:8080/ads/form" class="btn btn-outline-success" role="button"
+           style="font-size: 20px">Добавить</a>
+        <a href="http://localhost:8080/ads/removeForm" class="btn btn-outline-success" role="button"
+           style="font-size: 20px">Удалить</a>
+    </form>
+    <br>
+</div>
 
 <footer>
     <section class="footer">

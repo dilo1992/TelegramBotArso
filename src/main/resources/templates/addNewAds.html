@@ -15,7 +15,7 @@
     <script src="https://kit.fontawesome.com/743632d36e.js" crossorigin="anonymous"></script>
     <!--  Font awesome  -->
     <link rel="stylesheet" href="../templates/style.css">
-    <title>Success</title>
+    <title>Correct price</title>
 </head>
 
 <body>
@@ -67,17 +67,42 @@
     </div>
 </nav>
 
+
 <div class="name">
     <div class="container-xxl">
-        <h1 style="margin-top: 5rem;" class="text-center card-img">Изменить цену</h1>
+        <h1 style="margin-top: 5rem;" class="text-center card-img">Добавить элемент рассылки</h1>
     </div>
 </div>
 
-<br><br><br>
+<form th:action="@{/ads/new}" method="post" th:object="${ad}">
 
-<h2>Цена успешно изменена!</h2>
+
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupSelect01">Выберите периодичность</label>
+        <select class="form-select" type="text" th:field="*{rhythm}" name="rhythm"
+                id="inputGroupSelect01" required>
+            <option selected th:value='null'>Выберите из списка...</option>
+            <option th:value="MINUTE">Каждую минуту</option>
+            <option th:value="HOUR">Каждый час</option>
+            <option th:value="DAY">Каждый день (в 10:00)</option>
+            <option th:value="MONTH">Каждый месяц</option>
+            <option th:value="YEAR">Каждый год</option>
+
+        </select>
+        <span th:if="${#fields.hasErrors('rhythm')}" th:errors="*{rhythm}"></span>
+    </div>
+
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="floatingName">Введите текст рассылки</label>
+        <input type="text" th:field="*{ad}" name="newAd" class="form-control" id="floatingName"
+               placeholder="Введите текст рассылки" required>
+        <span th:if="${#fields.hasErrors('ad')}" th:errors="*{ad}"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirm</button>
+    <button type="reset" class="btn btn-primary">Clear</button>
+</form>
 <br>
-<a href="/products">Назад к странице продуктов</a>
 
 
 <footer>
